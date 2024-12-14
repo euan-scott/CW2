@@ -1,0 +1,31 @@
+---
+- name: Deploy Docker image from DockerHub to Kubernetes
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create a Kubernetes Deployment using Docker image
+      copy:
+        dest: /tmp/deployment.yaml
+        content: |
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: cw2-server
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: cw2-server
+            template:
+              metadata:
+                labels:
+                  app: cw2-server
+              spec:
+                containers:
+                  - name: cw2-server
+                    image: <your-dockerhub-username>/cw2-server:1.0
+                    ports:
+                      - containerPort: 8080
+
+    - name: Apply the deployment to Kubernetes
+      command: kubectl apply -f /tmp/deployment.yaml

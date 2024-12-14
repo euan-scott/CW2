@@ -1,0 +1,24 @@
+---
+- name: Create a Service for the application
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create a Kubernetes Service
+      copy:
+        dest: /tmp/service.yaml
+        content: |
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: cw2-server-service
+          spec:
+            selector:
+              app: cw2-server
+            ports:
+              - protocol: TCP
+                port: 80
+                targetPort: 8080
+            type: LoadBalancer
+
+    - name: Apply the service to Kubernetes
+      command: kubectl apply -f /tmp/service.yaml
