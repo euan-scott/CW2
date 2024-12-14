@@ -1,0 +1,66 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'your-dockerhub-username/cw2-server:1.0'
+        DOCKER_REGISTRY = 'docker.io'
+        DOCKER_CREDENTIALS = 'dockerhub-credentials-id'  // Replace with your Jenkins credentials ID for DockerHub
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from GitHub
+                git 'https://github.com/your-username/your-repository.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image from the Dockerfile
+                    docker.build("${DOCKER_IMAGE}")
+                }
+            }
+        }
+
+        stage('Test Docker Image') {
+            steps {
+                script {
+                    // Run the container to verify the image works
+                    def app = docker.run("${DOCKER_IMAGE}")
+                    // Check if the app is accessible by sending a request
+                    sh "curl -f http://localhost:8080"
+                }
+            }
+        }
+
+        stage('Push to DockerHub') {
+            steps {
+                script {
+                    // Push the Docker image to DockerHub
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS}") {
+                        docker.image("${DOCKER_IMAGE}").push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Assuming you have a kubectl config and your Kubernetes cluster is set up
+                    sh 'kubectl apply -f k8s/deployment.yaml'
+                    sh 'kubectl apply -f k8s/service.yaml'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            // Clean up docker images after the pipeline finishes
+            sh 'docker system prune -f'
+        }
+    }
+}
