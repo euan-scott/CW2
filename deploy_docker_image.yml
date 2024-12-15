@@ -23,7 +23,7 @@
               spec:
                 containers:
                   - name: cw2-server
-                    image: <your-dockerhub-username>/cw2-server:1.0
+                    image: euanscott16/cw2-server:1.0
                     ports:
                       - containerPort: 8080
 
