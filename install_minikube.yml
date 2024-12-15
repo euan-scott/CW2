@@ -1,7 +1,37 @@
 - name: Install and Start Minikube
-  hosts: production
-  become: yes
+  hosts: localhost
+  become: true
   tasks:
+
+    - name: Install dependencies for Minikube
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - conntrack
+        state: present
+        update_cache: true
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+        update_cache: true
+
+    - name: Ensure Docker service is started
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add user to Docker group
+      user:
+        name: ubuntu
+        group: docker
+        append: yes
+
     - name: Download Minikube binary
       get_url:
         url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
@@ -9,5 +39,10 @@
         mode: '0755'
 
     - name: Start Minikube
-      shell: minikube start --driver=none
+      command: minikube start --driver=docker
+      register: minikube_start
+      failed_when: "'ERROR' in minikube_start.stderr"
 
+    - name: Show Minikube status
+      debug:
+        var: minikube_start.stdout

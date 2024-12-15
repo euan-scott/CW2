@@ -1,12 +1,11 @@
-- name: Install kubectl
-  hosts: production
-  become: yes
+- name: Install Kubectl via Snap
+  hosts: localhost
+  become: true
   tasks:
-    - name: Download kubectl binary
-      get_url:
-        url: https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl
-        dest: /usr/local/bin/kubectl
-        mode: '0755'
+    - name: Install snapd
+      apt:
+        name: snapd
+        state: present
 
-    - name: Verify kubectl installation
-      shell: kubectl version --client
+    - name: Install kubectl
+      command: snap install kubectl --classic
