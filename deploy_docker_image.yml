@@ -29,4 +29,4 @@
                       - containerPort: 8080
 
     - name: Apply the deployment to Kubernetes
-      command: kubectl apply -f /tmp/deployment.yaml
+      command: kubectl apply -f /tmp/deployment.yaml --validate=false
