@@ -1,12 +1,6 @@
 pipeline {
     agent any
 
-environment {
-    SSH_PRIVATE_KEY = credentials('labsuserCW.pem')  // Correct ID for the SSH key credential
-    KUBECONFIG = '/home/ubuntu/.kube/config'  // Path to kubeconfig for production server
-}
-
-
     stages {
         stage('Checkout Code') {
             steps {
@@ -78,19 +72,19 @@ environment {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    echo 'Deploying to Kubernetes...'
-                    // Set Kubernetes context to production
-                    sh "kubectl config use-context minikube" // Use the correct Kubernetes context
+       // stage('Deploy to Kubernetes') {
+          //  steps {
+              //  script {
+                //    echo 'Deploying to Kubernetes...'
+               //     // Set Kubernetes context to production
+                 //   sh "kubectl config use-context minikube" // Use the correct Kubernetes context
                     // Deploy the application to the Kubernetes cluster
-                    sh "kubectl set image deployment/cw2-app cw2-server=${DOCKER_IMAGE} --record"
+                 //   sh "kubectl set image deployment/cw2-app cw2-server=${DOCKER_IMAGE} --record"
                     // Ensure the deployment is rolled out successfully
-                    sh "kubectl rollout status deployment/cw2-app"
-                }
-            }
-        }
+                //    sh "kubectl rollout status deployment/cw2-app"
+               // }
+           // }
+        //}
     }
 
     post {
