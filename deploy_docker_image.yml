@@ -2,6 +2,7 @@
 - name: Deploy Docker image from DockerHub to Kubernetes
   hosts: all
   become: yes
+  connection: local
   tasks:
     - name: Create a Kubernetes Deployment using Docker image
       copy:
