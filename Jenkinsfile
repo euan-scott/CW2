@@ -45,7 +45,7 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Push Docker Image') {
             steps {
                 echo 'Pushing Docker Image to DockerHub...'
@@ -60,15 +60,19 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    echo 'Deploying to Kubernetes...'
-                    sh "kubectl set image deployment/cw2-app cw2-server=${DOCKER_IMAGE} --record" // Update Kubernetes deployment
-                    sh "kubectl rollout status deployment/cw2-app" // Ensure rollout completes
-                }
-            }
-        }
+       // stage('Deploy to Kubernetes') {
+          //  steps {
+              //  script {
+                //    echo 'Deploying to Kubernetes...'
+               //     // Set Kubernetes context to production
+                 //   sh "kubectl config use-context minikube" // Use the correct Kubernetes context
+                    // Deploy the application to the Kubernetes cluster
+                 //   sh "kubectl set image deployment/cw2-app cw2-server=${DOCKER_IMAGE} --record"
+                    // Ensure the deployment is rolled out successfully
+                //    sh "kubectl rollout status deployment/cw2-app"
+               // }
+           // }
+        //}
     }
 
     post {
