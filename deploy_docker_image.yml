@@ -1,6 +1,6 @@
 ---
 - name: Deploy Docker image from DockerHub to Kubernetes
-  hosts: all
+  hosts: localhost
   become: yes
   connection: local
   tasks:
