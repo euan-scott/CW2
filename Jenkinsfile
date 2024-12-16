@@ -45,19 +45,7 @@ pipeline {
                 }
             }
         }
-
-        stage('Set up SSH Tunnel to Production') {
-            steps {
-                script {
-                    echo 'Setting up SSH tunnel to the production server...'
-                    // Set up SSH tunnel to forward local port 8081 to production server's 8080 port
-                    sh """
-                        ssh -i ${SSH_PRIVATE_KEY} -N -L 8081:localhost:8080 ubuntu@ec2-3-80-221-91.compute-1.amazonaws.com &
-                    """
-                }
-            }
-        }
-
+        
         stage('Push Docker Image') {
             steps {
                 echo 'Pushing Docker Image to DockerHub...'
