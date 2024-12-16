@@ -28,5 +28,5 @@
                     ports:
                       - containerPort: 8080
 
-    - name: Apply the deployment to Kubernetes using minikube kubectl
-      command: minikube kubectl -- apply -f /tmp/deployment.yaml --validate=false
+    - name: Apply the deployment to Kubernetes
+      command: kubectl apply -f /tmp/deployment.yaml --validate=false
