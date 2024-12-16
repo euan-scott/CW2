@@ -3,6 +3,8 @@
   hosts: localhost
   become: yes
   connection: local
+  environment:
+    KUBEVIRT_HOME: "{{ lookup('env', 'KUBEVIRT_HOME') }}"
   tasks:
     - name: Create a Kubernetes Deployment using Docker image
       copy:
