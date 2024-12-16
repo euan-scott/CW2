@@ -1,11 +1,11 @@
 pipeline {
     agent any
 
-    environment {
-        // Set up the Kubernetes context and docker image
-        SSH_PRIVATE_KEY = credentials('labsuserCW.pem') // SSH key stored in Jenkins
-        KUBECONFIG = '/home/ubuntu/.kube/config' // Path to kubeconfig for production server
-    }
+environment {
+    SSH_PRIVATE_KEY = credentials('labsuserCW.pem')  // Correct ID for the SSH key credential
+    KUBECONFIG = '/home/ubuntu/.kube/config'  // Path to kubeconfig for production server
+}
+
 
     stages {
         stage('Checkout Code') {
