@@ -3,8 +3,6 @@
   hosts: localhost
   become: yes
   connection: local
-  environment:
-    KUBEVIRT_HOME: "{{ lookup('env', 'KUBEVIRT_HOME') }}"
   tasks:
     - name: Create a Kubernetes Deployment using Docker image
       copy:
@@ -30,5 +28,5 @@
                     ports:
                       - containerPort: 8080
 
-    - name: Apply the deployment to Kubernetes
-      command: kubectl apply -f /tmp/deployment.yaml --validate=false
+    - name: Apply the deployment to Kubernetes using minikube kubectl
+      command: minikube kubectl -- apply -f /tmp/deployment.yaml --validate=false
