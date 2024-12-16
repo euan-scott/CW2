@@ -1,6 +1,12 @@
 pipeline {
     agent any
 
+    environment {
+        // Set up the Kubernetes context and docker image
+        SSH_PRIVATE_KEY = credentials('labsuserCW.pem') // SSH key stored in Jenkins
+        KUBECONFIG = '/home/ubuntu/.kube/config' // Path to kubeconfig for production server
+    }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -46,6 +52,18 @@ pipeline {
             }
         }
 
+        stage('Set up SSH Tunnel to Production') {
+            steps {
+                script {
+                    echo 'Setting up SSH tunnel to the production server...'
+                    // Set up SSH tunnel to forward local port 8081 to production server's 8080 port
+                    sh """
+                        ssh -i ${SSH_PRIVATE_KEY} -N -L 8081:localhost:8080 ubuntu@ec2-3-80-221-91.compute-1.amazonaws.com &
+                    """
+                }
+            }
+        }
+
         stage('Push Docker Image') {
             steps {
                 echo 'Pushing Docker Image to DockerHub...'
@@ -64,8 +82,12 @@ pipeline {
             steps {
                 script {
                     echo 'Deploying to Kubernetes...'
-                    sh "kubectl set image deployment/cw2-app cw2-server=${DOCKER_IMAGE} --record" // Update Kubernetes deployment
-                    sh "kubectl rollout status deployment/cw2-app" // Ensure rollout completes
+                    // Set Kubernetes context to production
+                    sh "kubectl config use-context minikube" // Use the correct Kubernetes context
+                    // Deploy the application to the Kubernetes cluster
+                    sh "kubectl set image deployment/cw2-app cw2-server=${DOCKER_IMAGE} --record"
+                    // Ensure the deployment is rolled out successfully
+                    sh "kubectl rollout status deployment/cw2-app"
                 }
             }
         }
